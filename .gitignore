@@ -1,0 +1,6 @@
+.DS_Store
+.idea/
+negative_sample_id.txt
+positive_sample_id.txt
+sample_id.txt
+*.table
