@@ -89,7 +89,7 @@ def validation_loop(model, inputs):
     plt.ylim([0, 1])
     plt.ylabel('True Positive Rate')
     plt.xlabel('False Positive Rate')
-    plt.savefig('valdiation roc plot.png')
+    plt.savefig('validation_roc_plot.png')
     plt.show()
 
 
