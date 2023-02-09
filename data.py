@@ -65,7 +65,7 @@ class SeqDataset(Dataset):
         processed_alleles, encoder = preprocess_data(alt_alleles, self.encoding_type, self.encoder)
         if self.encoder is None:
             self.encoder = encoder
-        return torch.FloatTensor(processed_alleles), torch.FloatTensor(label).unsqueeze(0)
+        return torch.FloatTensor(processed_alleles), torch.FloatTensor(label)
 
 
 @task(name='Read data', cache_key_fn=task_input_hash)
@@ -75,7 +75,6 @@ def read_data(filename):
     return alt_alleles
 
 
-@task(cache_key_fn=task_input_hash)
 def create_one_hot(alt_alleles, one_hot_encoder=None):
     alt_alleles = np.expand_dims(alt_alleles, 1)
 
@@ -85,11 +84,10 @@ def create_one_hot(alt_alleles, one_hot_encoder=None):
         onehot_alleles = one_hot_encoder.fit_transform(alt_alleles)
     else:
         onehot_alleles = one_hot_encoder.transform(alt_alleles)
-    tensor_onehot_alleles = torch.FloatTensor(onehot_alleles.toarray()).unsqueeze(0).permute(0, 2, 1)
+    tensor_onehot_alleles = torch.FloatTensor(onehot_alleles.toarray()).permute(1, 0)
     return tensor_onehot_alleles, one_hot_encoder
 
 
-@task(cache_key_fn=task_input_hash)
 def create_discrete(alt_alleles, label_encoder=None):
     if len(alt_alleles.shape) != 2:
         alt_alleles = np.expand_dims(alt_alleles, 1)
@@ -102,7 +100,6 @@ def create_discrete(alt_alleles, label_encoder=None):
         discrete_alleles = label_encoder.transform(alt_alleles.ravel())
 
     if len(discrete_alleles.shape) < 2:
-        discrete_alleles = np.expand_dims(discrete_alleles, 0)
         discrete_alleles = np.expand_dims(discrete_alleles, 0)
 
     return torch.FloatTensor(discrete_alleles), label_encoder

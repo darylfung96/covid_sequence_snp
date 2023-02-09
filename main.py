@@ -39,15 +39,15 @@ def generate_label(seed):
 
 
 @flow
-def training_loop(model, inputs):
+def training_loop(model, inputs, batch_size):
     inputs.set_train(True)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     # num_augments = 10
 
-    # loader = DataLoader(inputs, batch_size=1)
+    loader = DataLoader(inputs, batch_size=1)
     for i in range(10):
         # for j in range(num_augments):
-        for item, label in inputs:
+        for item, label in loader:
             optimizer.zero_grad()
             # augmented_inputs = augment_sequence(item, j)
             # label = generate_label(j)
@@ -117,14 +117,16 @@ def normal_pipeline():
 
     arg_parser = ArgumentParser()
     arg_parser.add_argument('--table_folder', type=str)
+    arg_parser.add_argument('--encoding_type', type=str, choices=['discrete', 'onehot'])
+    arg_parser.add_argument('--batch_size', type=int, default=2)
     args = arg_parser.parse_args()
 
     all_samples = glob(args.table_folder)
-    seq_dataset = SeqDataset(all_samples)
+    seq_dataset = SeqDataset(all_samples, encoding_type='discrete')
 
     # model creation
-    model = COVIDSeq1D(seq_dataset[0][0].shape[1])
-    training_loop(model, seq_dataset)
+    model = COVIDSeq1D(seq_dataset[0][0].shape[0])
+    training_loop(model, seq_dataset, args.batch_size)
     validation_loop(model, seq_dataset)
 
     # convert tensor to shap dimension
