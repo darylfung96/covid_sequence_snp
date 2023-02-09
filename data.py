@@ -61,7 +61,7 @@ class SeqDataset(Dataset):
         sample_list = self.train_filenames if self.train else self.test_filenames
 
         alt_alleles = read_data(sample_list[idx])
-        label = self.labels_dict[sample_list[idx]]
+        label = self.labels_dict[os.path.basename(sample_list[idx])]
         processed_alleles, encoder = preprocess_data(alt_alleles, self.encoding_type, self.encoder)
         if self.encoder is None:
             self.encoder = encoder
