@@ -51,6 +51,7 @@ def training_loop(model, inputs):
             # label = generate_label(j)
             outputs = model(item)
             loss = get_loss(outputs, label)
+            print(loss)
             loss.backward()
             optimizer.step()
 
