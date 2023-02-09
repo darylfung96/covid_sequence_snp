@@ -4,6 +4,7 @@ from prefect import flow, task
 from prefect.tasks import task_input_hash
 import torch
 from torch.autograd import Variable
+from torch.utils.data import DataLoader
 import torch.nn as nn
 import random
 import numpy as np
@@ -43,9 +44,10 @@ def training_loop(model, inputs):
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     # num_augments = 10
 
+    loader = DataLoader(inputs, batch_size=3)
     for i in range(1):
         # for j in range(num_augments):
-        for item, label in inputs:
+        for item, label in loader:
             optimizer.zero_grad()
             # augmented_inputs = augment_sequence(item, j)
             # label = generate_label(j)
