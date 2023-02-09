@@ -35,7 +35,21 @@ class SeqDataset(Dataset):
         self.train_filenames = self.filenames[:train_size]
         self.test_filenames = self.filenames[train_size:]
 
+        self.labels_dict = self._read_labels()
+
         self.train = train
+
+    def _read_labels(self):
+        labels_dict = {}
+        with open('positive_sample_id.txt', 'r') as file:
+            positive_labels = file.read().split('\n')
+            for positive_label in positive_labels:
+                labels_dict[positive_label] = 1
+        with open('negative_sample_id.txt', 'r') as file:
+            negative_labels = file.read().split('\n')
+            for negative_label in negative_labels:
+                labels_dict[negative_label] = 0
+        return labels_dict
 
     def train(self, value):
         self.train = value
@@ -46,11 +60,12 @@ class SeqDataset(Dataset):
     def __getitem__(self, idx):
         sample_list = self.train_filenames if self.train else self.test_filenames
 
-        alt_alleles = read_data(sample_list)
+        alt_alleles = read_data(sample_list[idx])
+        label = self.labels_dict[sample_list[idx]]
         processed_alleles, encoder = preprocess_data(alt_alleles, self.encoding_type, self.encoder)
         if self.encoder is None:
             self.encoder = encoder
-        return torch.FloatTensor(processed_alleles)
+        return torch.FloatTensor(processed_alleles), torch.LongTensor(label)
 
 
 @task(name='Read data', cache_key_fn=task_input_hash)

@@ -1,4 +1,5 @@
 import pandas as pd
+from argparse import ArgumentParser
 from prefect import flow, task
 from prefect.tasks import task_input_hash
 import torch
@@ -44,11 +45,11 @@ def training_loop(model, inputs):
 
     for i in range(10):
         for j in range(num_augments):
-            for item in inputs:
+            for item, label in inputs:
                 optimizer.zero_grad()
-                augmented_inputs = augment_sequence(item, j)
-                label = generate_label(j)
-                outputs = model(augmented_inputs)
+                # augmented_inputs = augment_sequence(item, j)
+                # label = generate_label(j)
+                outputs = model(item)
                 loss = get_loss(outputs, label)
                 loss.backward()
                 optimizer.step()
@@ -59,10 +60,10 @@ def validation_loop(model, inputs):
     all_outputs = []
     all_labels = []
     for j in range(10):
-        for item in inputs:
-            augmented_inputs = augment_sequence(item, j)
-            label = generate_label(j)
-            outputs = model(augmented_inputs)
+        for item, label in inputs:
+            # augmented_inputs = augment_sequence(item, j)
+            # label = generate_label(j)
+            outputs = model(item)
             all_outputs.append(outputs.detach().numpy())
             all_labels.append(label.detach().numpy())
 
@@ -110,7 +111,11 @@ def k_mers_pipeline():
 @flow(name='normal')
 def normal_pipeline():
 
-    all_samples = glob('samples/*')
+    arg_parser = ArgumentParser()
+    arg_parser.add_argument('--table_folder', type=str)
+    args = arg_parser.parse_args()
+
+    all_samples = glob(args.table_folder)
     seq_dataset = SeqDataset(all_samples)
 
     # model creation
