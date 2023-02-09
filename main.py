@@ -43,7 +43,7 @@ def training_loop(model, inputs):
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     num_augments = 10
 
-    for i in range(10):
+    for i in range(1):
         for j in range(num_augments):
             for item, label in inputs:
                 optimizer.zero_grad()
@@ -59,13 +59,12 @@ def validation_loop(model, inputs):
     inputs.set_train(False)
     all_outputs = []
     all_labels = []
-    for j in range(1):
-        for item, label in inputs:
-            # augmented_inputs = augment_sequence(item, j)
-            # label = generate_label(j)
-            outputs = model(item)
-            all_outputs.append(outputs.detach().numpy())
-            all_labels.append(label.detach().numpy())
+    for item, label in inputs:
+        # augmented_inputs = augment_sequence(item, j)
+        # label = generate_label(j)
+        outputs = model(item)
+        all_outputs.append(outputs.detach().numpy())
+        all_labels.append(label.detach().numpy())
 
     all_outputs = np.array(all_outputs)
     all_labels = np.array(all_labels)
