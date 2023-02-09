@@ -58,7 +58,7 @@ def training_loop(model, inputs, batch_size):
             optimizer.step()
 
 @flow
-def validation_loop(model, inputs):
+def validation_loop(model, inputs: SeqDataset):
     inputs.set_train(False)
     all_outputs = []
     all_labels = []
@@ -91,7 +91,7 @@ def validation_loop(model, inputs):
     plt.ylim([0, 1])
     plt.ylabel('True Positive Rate')
     plt.xlabel('False Positive Rate')
-    plt.savefig('validation_roc_plot.png')
+    plt.savefig(f'validation_roc_plot_{inputs.encoding_type}.png')
     plt.show()
 
 
