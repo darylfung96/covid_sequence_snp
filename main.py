@@ -41,18 +41,18 @@ def generate_label(seed):
 def training_loop(model, inputs):
     inputs.set_train(True)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    num_augments = 10
+    # num_augments = 10
 
     for i in range(1):
-        for j in range(num_augments):
-            for item, label in inputs:
-                optimizer.zero_grad()
-                # augmented_inputs = augment_sequence(item, j)
-                # label = generate_label(j)
-                outputs = model(item)
-                loss = get_loss(outputs, label)
-                loss.backward()
-                optimizer.step()
+        # for j in range(num_augments):
+        for item, label in inputs:
+            optimizer.zero_grad()
+            # augmented_inputs = augment_sequence(item, j)
+            # label = generate_label(j)
+            outputs = model(item)
+            loss = get_loss(outputs, label)
+            loss.backward()
+            optimizer.step()
 
 @flow
 def validation_loop(model, inputs):
