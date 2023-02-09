@@ -44,11 +44,11 @@ class SeqDataset(Dataset):
         with open('positive_sample_id.txt', 'r') as file:
             positive_labels = file.read().split('\n')
             for positive_label in positive_labels:
-                labels_dict[positive_label] = 1
+                labels_dict[positive_label] = [1]
         with open('negative_sample_id.txt', 'r') as file:
             negative_labels = file.read().split('\n')
             for negative_label in negative_labels:
-                labels_dict[negative_label] = 0
+                labels_dict[negative_label] = [0]
         return labels_dict
 
     def set_train(self, value):
