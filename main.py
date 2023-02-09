@@ -44,10 +44,10 @@ def training_loop(model, inputs):
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     # num_augments = 10
 
-    loader = DataLoader(inputs, batch_size=1)
-    for i in range(1):
+    # loader = DataLoader(inputs, batch_size=1)
+    for i in range(10):
         # for j in range(num_augments):
-        for item, label in loader:
+        for item, label in inputs:
             optimizer.zero_grad()
             # augmented_inputs = augment_sequence(item, j)
             # label = generate_label(j)
