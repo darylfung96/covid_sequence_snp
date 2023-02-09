@@ -58,7 +58,7 @@ def training_loop(model, inputs, batch_size):
             optimizer.step()
 
 @flow
-def validation_loop(model, inputs: SeqDataset):
+def validation_loop(model, inputs):
     inputs.set_train(False)
     all_outputs = []
     all_labels = []
