@@ -119,7 +119,7 @@ def normal_pipeline():
     seq_dataset = SeqDataset(all_samples)
 
     # model creation
-    model = COVIDSeq1D(seq_dataset[0].shape[1])
+    model = COVIDSeq1D(seq_dataset[0][0].shape[1])
     training_loop(model, seq_dataset)
     validation_loop(model, seq_dataset)
 
