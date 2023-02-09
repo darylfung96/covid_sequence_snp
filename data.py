@@ -65,7 +65,7 @@ class SeqDataset(Dataset):
         processed_alleles, encoder = preprocess_data(alt_alleles, self.encoding_type, self.encoder)
         if self.encoder is None:
             self.encoder = encoder
-        return torch.FloatTensor(processed_alleles), torch.LongTensor(label).unsqueeze(0)
+        return torch.FloatTensor(processed_alleles), torch.FloatTensor(label).unsqueeze(0)
 
 
 @task(name='Read data', cache_key_fn=task_input_hash)
