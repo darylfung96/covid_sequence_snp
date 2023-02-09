@@ -1,5 +1,5 @@
 import numpy as np
-from random import shuffle
+import os
 import pandas as pd
 import torch
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
