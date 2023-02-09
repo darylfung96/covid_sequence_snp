@@ -59,7 +59,7 @@ def validation_loop(model, inputs):
     inputs.set_train(False)
     all_outputs = []
     all_labels = []
-    for j in range(10):
+    for j in range(1):
         for item, label in inputs:
             # augmented_inputs = augment_sequence(item, j)
             # label = generate_label(j)
@@ -79,6 +79,7 @@ def validation_loop(model, inputs):
 
     fpr, tpr, threshold = roc_curve(all_labels.ravel(), all_outputs.ravel())
     roc_auc = auc(fpr, tpr)
+    print(f'ROC value: {roc_auc}')
 
     plt.title('Receiver Operating Characteristic')
     plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)
@@ -88,6 +89,7 @@ def validation_loop(model, inputs):
     plt.ylim([0, 1])
     plt.ylabel('True Positive Rate')
     plt.xlabel('False Positive Rate')
+    plt.savefig('valdiation roc plot.png')
     plt.show()
 
 
