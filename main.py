@@ -39,7 +39,7 @@ def generate_label(seed):
 
 @flow
 def training_loop(model, inputs):
-    inputs.train(True)
+    inputs.set_train(True)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     num_augments = 10
 
@@ -56,7 +56,7 @@ def training_loop(model, inputs):
 
 @flow
 def validation_loop(model, inputs):
-    inputs.train(False)
+    inputs.set_train(False)
     all_outputs = []
     all_labels = []
     for j in range(10):

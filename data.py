@@ -51,7 +51,7 @@ class SeqDataset(Dataset):
                 labels_dict[negative_label] = 0
         return labels_dict
 
-    def train(self, value):
+    def set_train(self, value):
         self.train = value
 
     def __len__(self):
