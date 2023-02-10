@@ -136,7 +136,7 @@ def normal_pipeline():
     arg_parser.add_argument('--encoding_type', type=str, choices=['discrete', 'onehot'])
     arg_parser.add_argument('--batch_size', type=int, default=2)
     args = arg_parser.parse_args()
-    wandb.init(group=args.encoding_type)
+    wandb.init(group=args.encoding_type, name=args.encoding_type)
 
     all_samples = glob(args.table_folder)
     seq_dataset = SeqDataset(all_samples, encoding_type=args.encoding_type)
