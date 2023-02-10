@@ -55,8 +55,8 @@ def training_loop(model, inputs, batch_size):
             optimizer.zero_grad()
             # augmented_inputs = augment_sequence(item, j)
             # label = generate_label(j)
-            item = item.device(device)
-            label = label.device(device)
+            item = item.to(device)
+            label = label.to(device)
             outputs = model(item)
             loss = get_loss(outputs, label)
             loss.backward()
@@ -70,8 +70,8 @@ def training_loop(model, inputs, batch_size):
         for item, label in loader:
             # augmented_inputs = augment_sequence(item, j)
             # label = generate_label(j)
-            item = item.device(device)
-            label = label.device(device)
+            item = item.to(device)
+            label = label.to(device)
             outputs = model(item)
             loss = get_loss(outputs, label)
             all_val_loss.append(loss.item())
@@ -88,8 +88,8 @@ def validation_loop(model, inputs):
     for item, label in loader:
         # augmented_inputs = augment_sequence(item, j)
         # label = generate_label(j)
-        item = item.device(device)
-        label = label.device(device)
+        item = item.to(device)
+        label = label.to(device)
         outputs = model(item)
         all_outputs.append(outputs.detach().numpy())
         all_labels.append(label.detach().numpy())
@@ -158,7 +158,7 @@ def normal_pipeline():
     }
     model = model_dict[args.model_type](seq_dataset[0][0].shape[0])
     wandb.watch(model)
-    model = model.device(device)
+    model = model.to(device)
     training_loop(model, seq_dataset, args.batch_size)
     validation_loop(model, seq_dataset)
 
