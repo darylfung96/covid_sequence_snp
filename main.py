@@ -124,7 +124,7 @@ def normal_pipeline():
     args = arg_parser.parse_args()
 
     all_samples = glob(args.table_folder)
-    seq_dataset = SeqDataset(all_samples, encoding_type='discrete')
+    seq_dataset = SeqDataset(all_samples, encoding_type=args.encoding_type)
 
     # model creation
     model = COVIDSeq1D(seq_dataset[0][0].shape[0])
