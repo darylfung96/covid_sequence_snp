@@ -68,7 +68,7 @@ class SeqDataset(Dataset):
         return torch.FloatTensor(processed_alleles), torch.FloatTensor(label)
 
 
-@task(name='Read data', cache_key_fn=task_input_hash)
+# @task(name='Read data', cache_key_fn=task_input_hash)
 def read_data(filename):
     data = pd.read_csv(filename, '\t')
     alt_alleles = data['ALT']
