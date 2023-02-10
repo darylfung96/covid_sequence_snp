@@ -91,8 +91,8 @@ def validation_loop(model, inputs):
         item = item.to(device)
         label = label.to(device)
         outputs = model(item)
-        all_outputs.append(outputs.detach().numpy())
-        all_labels.append(label.detach().numpy())
+        all_outputs.append(outputs.cpu().detach().numpy())
+        all_labels.append(label.cpu().detach().numpy())
 
     all_outputs = np.array(all_outputs)
     all_labels = np.array(all_labels)
