@@ -18,7 +18,7 @@ from data import read_data, preprocess_data, create_k_mers, SeqDataset
 from model import COVIDSeq1D, COVIDSeq1DLSTM, get_loss
 
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = 'cpu' if torch.cuda.is_available() else 'cpu'
 
 
 def set_seeds(seed):
@@ -162,7 +162,7 @@ def normal_pipeline():
     training_loop(model, seq_dataset, args.batch_size)
     validation_loop(model, seq_dataset)
 
-    torch.save(model.save_dict(), f"models/{args.encoding_type}.pt")
+    torch.save(model.state_dict(), f"models/{args.encoding_type}.pt")
     art = wandb.Artifact(args.model_type, type="model")
     art.add_file(f"models/{args.encoding_type}.pt")
     wandb.log_artifact(art)
