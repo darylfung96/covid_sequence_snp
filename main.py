@@ -11,6 +11,7 @@ import numpy as np
 from sklearn.metrics import roc_auc_score, roc_curve, auc
 import matplotlib.pyplot as plt
 import shap
+import wandb
 from glob import glob
 
 from data import read_data, preprocess_data, create_k_mers, SeqDataset
@@ -56,6 +57,20 @@ def training_loop(model, inputs, batch_size):
             print(loss)
             loss.backward()
             optimizer.step()
+            wandb.log({'training_loss': loss.item()})
+
+        # get validation loss
+        inputs.set_train(False)
+        all_val_loss = []
+        loader = DataLoader(inputs, batch_size=1)
+        for item, label in loader:
+            # augmented_inputs = augment_sequence(item, j)
+            # label = generate_label(j)
+            outputs = model(item)
+            loss = get_loss(outputs, label)
+            all_val_loss.append(loss.item())
+        avg_val_loss = sum(all_val_loss)/len(all_val_loss)
+        wandb.log({'validation_loss': avg_val_loss})
 
 @flow
 def validation_loop(model, inputs):
@@ -83,6 +98,7 @@ def validation_loop(model, inputs):
 
     fpr, tpr, threshold = roc_curve(all_labels.ravel(), all_outputs.ravel())
     roc_auc = auc(fpr, tpr)
+    wandb.log({'roc_auc': roc_auc, 'optimal_threshold': optimal_threshold})
     print(f'ROC value: {roc_auc}')
 
     plt.title('Receiver Operating Characteristic')
@@ -116,7 +132,7 @@ def k_mers_pipeline():
 
 @flow(name='normal')
 def normal_pipeline():
-
+    wandb.init()
     arg_parser = ArgumentParser()
     arg_parser.add_argument('--table_folder', type=str)
     arg_parser.add_argument('--encoding_type', type=str, choices=['discrete', 'onehot'])
@@ -128,6 +144,7 @@ def normal_pipeline():
 
     # model creation
     model = COVIDSeq1D(seq_dataset[0][0].shape[0])
+    wandb.watch(model)
     training_loop(model, seq_dataset, args.batch_size)
     validation_loop(model, seq_dataset)
 
