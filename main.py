@@ -152,8 +152,9 @@ def normal_pipeline():
     training_loop(model, seq_dataset, args.batch_size)
     validation_loop(model, seq_dataset)
 
+    torch.save(model.save_dict(), f"models/{args.encoding_type}.pt")
     art = wandb.Artifact(args.model_type, type="model")
-    art.add_file("saved_model_weights.pt")
+    art.add_file(f"models/{args.encoding_type}.pt")
     wandb.log_artifact(art)
 
     # convert tensor to shap dimension
