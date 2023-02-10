@@ -134,6 +134,7 @@ def normal_pipeline():
     arg_parser = ArgumentParser()
     arg_parser.add_argument('--table_folder', type=str)
     arg_parser.add_argument('--encoding_type', type=str, choices=['discrete', 'onehot'])
+    arg_parser.add_argument('--model_type', type=str, default='covid1d_lstm', choices=['covid1d', 'covid1d_lstm'])
     arg_parser.add_argument('--batch_size', type=int, default=2)
     args = arg_parser.parse_args()
     wandb.init(group=args.encoding_type, name=args.encoding_type)
@@ -142,10 +143,18 @@ def normal_pipeline():
     seq_dataset = SeqDataset(all_samples, encoding_type=args.encoding_type)
 
     # model creation
-    model = COVIDSeq1D(seq_dataset[0][0].shape[0])
+    model_dict = {
+        'covid1d': COVIDSeq1D,
+        'covid1d_lstm': COVIDSeq1DLSTM
+    }
+    model = model_dict[args.model_type](seq_dataset[0][0].shape[0])
     wandb.watch(model)
     training_loop(model, seq_dataset, args.batch_size)
     validation_loop(model, seq_dataset)
+
+    art = wandb.Artifact(args.model_type, type="model")
+    art.add_file("saved_model_weights.pt")
+    wandb.log_artifact(art)
 
     # convert tensor to shap dimension
     # if tensor_processed_alleles.shape[1] == 1:
