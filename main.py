@@ -54,7 +54,6 @@ def training_loop(model, inputs, batch_size):
             # label = generate_label(j)
             outputs = model(item)
             loss = get_loss(outputs, label)
-            print(loss)
             loss.backward()
             optimizer.step()
             wandb.log({'training_loss': loss.item()})
@@ -132,12 +131,12 @@ def k_mers_pipeline():
 
 @flow(name='normal')
 def normal_pipeline():
-    wandb.init()
     arg_parser = ArgumentParser()
     arg_parser.add_argument('--table_folder', type=str)
     arg_parser.add_argument('--encoding_type', type=str, choices=['discrete', 'onehot'])
     arg_parser.add_argument('--batch_size', type=int, default=2)
     args = arg_parser.parse_args()
+    wandb.init(group=args.encoding_type)
 
     all_samples = glob(args.table_folder)
     seq_dataset = SeqDataset(all_samples, encoding_type=args.encoding_type)
