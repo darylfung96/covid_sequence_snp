@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 import torch.nn as nn
 import random
 import numpy as np
-from sklearn.metrics import roc_auc_score, roc_curve, auc
+from sklearn.metrics import roc_auc_score, roc_curve, auc, f1_score, precision_score, recall_score
 import matplotlib.pyplot as plt
 import shap
 import wandb
@@ -108,6 +108,17 @@ def validation_loop(model, inputs):
     roc_auc = auc(fpr, tpr)
     wandb.log({'roc_auc': roc_auc, 'optimal_threshold': optimal_threshold})
     print(f'ROC value: {roc_auc}')
+
+    f1 = f1_score(all_labels.ravel(), all_outputs.ravel())
+    precision = precision_score(all_labels.ravel(), all_outputs.ravel())
+    recall = recall_score(all_labels.ravel(), all_outputs.ravel())
+
+    wandb.log({'roc_auc': roc_auc, 'optimal_threshold': optimal_threshold,
+               'f1': f1, 'precision': precision, 'recall': recall})
+
+    print(f'f1: {f1}')
+    print(f'precision: {precision}')
+    print(f'recall: {recall}')
 
     plt.title('Receiver Operating Characteristic')
     plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)
