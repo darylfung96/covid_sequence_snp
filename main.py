@@ -100,6 +100,8 @@ def validation_loop(model, inputs):
     fpr, tpr, threshold = roc_curve(all_labels.ravel(), all_outputs.ravel())
     optimal_idx = np.argmax(tpr - fpr)
     optimal_threshold = threshold[optimal_idx]
+    if optimal_threshold > 1:
+        optimal_threshold -= 1
 
     all_outputs[all_outputs > optimal_threshold] = 1
     all_outputs[all_outputs <= optimal_threshold] = 0
@@ -167,6 +169,12 @@ def normal_pipeline():
         'conv1d': COVIDSeq1D,
         'conv1d_lstm': COVIDSeq1DLSTM
     }
+
+    random.seed(100)
+    torch.random.manual_seed(100)
+    torch.use_deterministic_algorithms(True)
+    np.random.seed(100)
+
     model = model_dict[args.model_type](seq_dataset[0][0].shape[0])
     wandb.watch(model)
     model = model.to(device)
