@@ -185,8 +185,8 @@ def normal_pipeline():
     model = model_dict[args.model_type](seq_dataset[0][0].shape[0])
     wandb.watch(model)
     model = model.to(device)
-    training_loop(model, seq_dataset, args.batch_size, args)
-    validation_loop(model, seq_dataset)
+    training_loop(model, seq_dataset, args.batch_size)
+    validation_loop(model, seq_dataset, args)
 
     torch.save(model.state_dict(), f"models/{args.encoding_type}.pt")
     art = wandb.Artifact(args.model_type, type="model")
