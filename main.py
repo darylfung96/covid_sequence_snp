@@ -154,7 +154,7 @@ def normal_pipeline():
     arg_parser = ArgumentParser()
     arg_parser.add_argument('--table_folder', type=str)
     arg_parser.add_argument('--encoding_type', type=str, choices=['discrete', 'onehot'])
-    arg_parser.add_argument('--model_type', type=str, default='covid1d_lstm', choices=['covid1d', 'covid1d_lstm'])
+    arg_parser.add_argument('--model_type', type=str, default='conv1d_lstm', choices=['conv1d', 'conv1d_lstm'])
     arg_parser.add_argument('--batch_size', type=int, default=2)
     args = arg_parser.parse_args()
     wandb.init(group=args.model_type, name=args.encoding_type)
@@ -164,8 +164,8 @@ def normal_pipeline():
 
     # model creation
     model_dict = {
-        'covid1d': COVIDSeq1D,
-        'covid1d_lstm': COVIDSeq1DLSTM
+        'conv1d': COVIDSeq1D,
+        'conv1d_lstm': COVIDSeq1DLSTM
     }
     model = model_dict[args.model_type](seq_dataset[0][0].shape[0])
     wandb.watch(model)
