@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from prefect import flow, task
 from prefect.tasks import task_input_hash
 import torch
+import os
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
 import torch.nn as nn
@@ -79,7 +80,7 @@ def training_loop(model, inputs, batch_size):
         wandb.log({'validation_loss': avg_val_loss})
 
 @flow
-def validation_loop(model, inputs):
+def validation_loop(model, inputs, args):
     inputs.set_train(False)
     all_outputs = []
     all_labels = []
@@ -96,6 +97,12 @@ def validation_loop(model, inputs):
 
     all_outputs = np.array(all_outputs)
     all_labels = np.array(all_labels)
+
+    os.makedirs('outputs', exist_ok=True)
+    torch.save({
+        'outputs': all_outputs,
+        'labels': all_labels
+    }, os.path.join('outputs', f'{args.model_type}_{args.encoding_type}'))
 
     fpr, tpr, threshold = roc_curve(all_labels.ravel(), all_outputs.ravel())
     optimal_idx = np.argmax(tpr - fpr)
@@ -178,7 +185,7 @@ def normal_pipeline():
     model = model_dict[args.model_type](seq_dataset[0][0].shape[0])
     wandb.watch(model)
     model = model.to(device)
-    training_loop(model, seq_dataset, args.batch_size)
+    training_loop(model, seq_dataset, args.batch_size, args)
     validation_loop(model, seq_dataset)
 
     torch.save(model.state_dict(), f"models/{args.encoding_type}.pt")
